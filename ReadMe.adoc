@@ -4,53 +4,58 @@
 :Revision: version#
 :License: Public Domain
 
-= Project: {Project}
+= Sound Monitoring System
 
-Describe your project
+A prototype sound monitoring system designed for regulatory bodies be it federal or private to monitor noise disturbances at construction sites, highways, train lines etc … 
 
-== Step 1: Installation
-Please describe the steps to install this project.
+image::.github/illustration.png[Architecture]
 
-For example:
+== Installation
+You will need to install the following arduino libraries:
 
-1. Open this file
-2. Edit as you like
-3. Release to the World!
+1. WiFiNINA
+1. ArduinoIoTCloud
+1. Arduino_ConnectionHandler
 
-== Step 2: Assemble the circuit
+For full functionality you will also need:
+
+1. Node.js
+1. python 3.6 or later
+
+== Assemble the circuit
 
 Assemble the circuit following the diagram layout.png attached to the sketch
 
-== Step 3: Load the code
+==  Load the code
 
 Upload the code contained in this sketch on to your board
 
 === Folder structure
 
 ....
- sketch123                => Arduino sketch folder
-  ├── sketch123.ino       => main Arduino file
-  ├── schematics.png      => (optional) an image of the required schematics
-  ├── layout.png          => (optional) an image of the layout
-  └── ReadMe.adoc         => this file
+ elec0017-cw                => Arduino sketch folder
+  ├── elec0017-cw.ino       => Main Arduino file
+  ├── ReadMe.adoc           => This file
+  ├── server.js             => the webhook server
+  ├── tests                 
+  | └─ mock_server.py       => A mock server for testing the webhook server
+  └── .github
+    ├─ illustration.png     => An illustration of the project
+    └─ architecture.png     => A diagram of the system architecture
 ....
 
-=== License
-This project is released under a {License} License.
-
-=== Contributing
-To contribute to this project please contact: 
-
-=== BOM
-Add the bill of the materials you need for this project.
+=== Bill of Materials
 
 |===
 | ID | Part name      | Part number | Quantity
-| R1 | 10k Resistor   | 1234-abcd   | 10       
-| L1 | Red LED        | 2345-asdf   | 5        
-| A1 | Arduino Zero   | ABX00066    | 1        
+| A1 | MKR WiFi 1010  | Abx00023   | 1       
+| A2 | MKR Connector Carrier        | ASX00007   | 1        
+| S1 | Sound Sensor   | 101020023    | 1        
 |===
 
+=== Example of use
+When assembled it should look something like this
+image::.github/example.jpg[example]
 
 === Help
 This document is written in the _AsciiDoc_ format, a markup language to describe documents. 

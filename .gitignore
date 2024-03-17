@@ -1,2 +1,4 @@
 arduino_secrets.h
 build
+
+.vscode/c_cpp_properties.json
