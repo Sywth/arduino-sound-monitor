@@ -55,6 +55,7 @@ Upload the code contained in this sketch on to your board
 
 === Example of use
 When assembled it should look something like this
+
 image::.github/example.jpg[example]
 
 === Help
