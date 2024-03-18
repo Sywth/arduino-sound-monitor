@@ -48,8 +48,8 @@ void setup() {
     threshold = 0.0f;
   }
 }
-byte server[] = {192,168,1,174};
-const int passes = 32;
+
+const int passes = 1;
 float getCurrentLoudness() {
   float sensorValue = 0;
   for (int i = 0; i < passes; i++) {
@@ -65,29 +65,9 @@ void loop() {
   loudness = getCurrentLoudness();
   if (loudness > threshold) {
     Serial.println(loudness);
-    if (client.connect(server, 3000)) {
-      Serial.println("Connected to server at port 3000");
-
-      // Make a GET request
-      client.println("GET / HTTP/1.1");
-      client.println("Host: localhost:3000");
-      client.println("Connection: close");
-      client.println();
-
-      // Read the response
-      while (client.connected()) {
-        if (client.available()) {
-          char c = client.read();
-          Serial.print(c);
-        }
-      }
-
-      // Close the connection
-      client.stop();
-      Serial.println("\nDisconnected");
-    } else {
-      Serial.println("Not connected to localhost 3000");
-    }
+    isVoliation = true; 
+  } else {
+    isVoliation = false;
   }
 }
 
