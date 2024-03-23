@@ -18,12 +18,19 @@
 #include <math.h>
 
 const int soundPin = A0;
+
+const int ledGreenPin = 25;
+const int ledRedPin = 26;
+const int ledBluePin = 27;
+
 const int baudRate = 115200;
-Client& client = ArduinoIoTPreferredConnection.getClient();
+typedef struct colorRgb {
+  unsigned char x, y, z;  
+} tColorRgb;
 
 void setup() {
   // Initialize serial and wait for port to open:
-  Serial.begin(115200);
+  Serial.begin(baudRate);
   // This delay gives the chance to wait for a Serial Monitor without blocking if none is found
   delay(1500);
 
@@ -47,24 +54,66 @@ void setup() {
     Serial.println("threshold undefined, Setting to default value ");
     threshold = 0.0f;
   }
+
+  // define pins  
+  WiFiDrv::pinMode(ledGreenPin, OUTPUT); //define GREEN LED
+  WiFiDrv::pinMode(ledRedPin, OUTPUT); //define RED LED
+  WiFiDrv::pinMode(ledBluePin, OUTPUT); //define BLUE LED
 }
 
 const int passes = 1;
+
+
 float getCurrentLoudness() {
   float sensorValue = 0;
   for (int i = 0; i < passes; i++) {
     sensorValue += analogRead(soundPin);
     delay(1);
   }
+  // [0,1]
   return sensorValue / (1023.0f * (float)passes);
+}
+float getNormalizedLoudness() {
+  // scaled such that at threshold the value is 1
+  
+  if (threshold == 0.0f) {
+    threshold = 0.001f;
+  }
+
+  // [0,inf]
+  return getCurrentLoudness()/threshold;
+}
+
+void setColorToLoudness(tColorRgb &ledColor, float normalizedLoudness) {
+  // lerp x,y,z bettween 255,0,0 to 0,255,0 for tColorRgb as normalizedLoudness goes from 1 to 0 
+  ledColor.x = (unsigned char)(255 * normalizedLoudness);
+  ledColor.y = (unsigned char)(255 * (1 - normalizedLoudness));
+  ledColor.z = 0;
 }
 
 void loop() {
   ArduinoCloud.update();
-  // Your code here
-  loudness = getCurrentLoudness();
-  if (loudness > threshold) {
-    Serial.println(loudness);
+
+  float normalizedLoudness = getNormalizedLoudness();
+  loudness = std::min(1.f, normalizedLoudness);
+
+  tColorRgb ledColor = {0, 0, 0};
+  setColorToLoudness(ledColor, loudness);
+
+  // Serial.println("Red ");
+  // Serial.println(ledColor.x);
+  // Serial.println("Gre ");
+  // Serial.println(ledColor.y);
+  // Serial.println("Blu ");
+  // Serial.println(ledColor.z);
+
+  WiFiDrv::analogWrite(ledRedPin,ledColor.x); // Red
+  WiFiDrv::analogWrite(ledGreenPin,ledColor.y);  // Green //Note that analogWrite takes int while i am passing in a unsigned int is this an issue ?
+  WiFiDrv::analogWrite(ledBluePin,ledColor.z);   // Blue
+
+
+  if (normalizedLoudness > threshold) {
+    Serial.println(normalizedLoudness);
     isVoliation = true; 
   } else {
     isVoliation = false;
